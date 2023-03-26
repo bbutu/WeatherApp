@@ -6,9 +6,11 @@
 //
 
 import UIKit
-
+import CoreLocation
 
 class TodayViewController: UIViewController {
+    
+    var locationManager: CLLocationManager!
     
     private var cities: [City] = [City]()
     
@@ -58,10 +60,19 @@ class TodayViewController: UIViewController {
         collectionView.backgroundColor = .blueBackgroundColor
         return collectionView
     }()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+//        DispatchQueue.global(qos: .userInitiated).async {
+//            // Wait for location update before executing rest of the code
+//            while self.locationManager.location == nil {}
+//        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        retrieveAndReloadDataAfterFirstRun()
+        getLocation()
+//        retrieveAndReloadDataAfterFirstRun()
         view.backgroundColor = .blueBackgroundColor
         configureNavBar()
         view.addSubview(todayCollectionView)
@@ -74,7 +85,6 @@ class TodayViewController: UIViewController {
         todayCollectionView.refreshControl = UIRefreshControl()
         todayCollectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         addShadowsToButton()
-        getCurrentWeather()
         configureConstraints()
     }
     
@@ -86,10 +96,6 @@ class TodayViewController: UIViewController {
             activity.center = view.center
             activity.style = .large
             view.addSubview(activity)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-                self?.getCurrentWeather()
-            }
             activity.stopAnimating()
             dataIsRetrieved = true
         }
@@ -97,7 +103,7 @@ class TodayViewController: UIViewController {
     
     private func refreshData() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-            self?.getCurrentWeather()
+
             self?.todayCollectionView.reloadData()
         }
         self.todayCollectionView.refreshControl?.endRefreshing()
@@ -168,24 +174,30 @@ class TodayViewController: UIViewController {
     @objc private func didTapRefreshButton() {
         refreshData()
     }
-    
-    //Tbilisi: "41.71"
-//             "44.78"
-    
-    private func getCurrentWeather() {
-        APICaller.shared.getCurrentWeather(latitude: "41.71", longitude: "44.78") { result in
+
+    private func getCurrentWeather(latitude: String, longitude: String) {
+        APICaller.shared.getCurrentWeather(latitude: latitude, longitude: longitude) { result in
             switch result {
             case .success(let city):
                 self.cities.append(city)
+                DispatchQueue.main.async { [weak self] in
+                    self?.todayCollectionView.reloadData()
+                }
                 print(city.name)
             case .failure(let error):
                 print(error)
             }
         }
-        
-        APICaller.shared.getCityWith(cityName: "Kutaisi") { result in
+    }
+    
+    private func getWeatherWithCityName(name: String) {
+        APICaller.shared.getCityWith(cityName: name) { result in
             switch result {
             case .success(let city):
+                self.cities.append(city)
+                DispatchQueue.main.async { [weak self] in
+                    self?.todayCollectionView.reloadData()
+                }
                 print(city.name)
             case .failure(let error):
                 print(error)
@@ -228,16 +240,81 @@ class TodayViewController: UIViewController {
 
 extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSource  {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return self.cities.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayCollectionViewCell.identifier, for: indexPath) as? TodayCollectionViewCell else {
             return UICollectionViewCell()
         }
-        
-//            cell.configure(with: self.cities[0])
-        
+        if(!cities.isEmpty) {
+            cell.configure(with: cities[indexPath.row])
+        }
         return cell
     }
+}
+
+extension TodayViewController: CLLocationManagerDelegate {
+    func getLocation() {
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+    }
+    
+    func handleAuthenticalStatus(status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted:
+            showLocationDisabledAlert()
+        case .denied:
+            showLocationDisabledAlert()
+        case .authorizedAlways:
+            locationManager.requestLocation()
+        case .authorizedWhenInUse:
+            locationManager.requestLocation()
+        @unknown default:
+            print("Unknown case of status in handleAuthenticalStatus\(status)")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        print("Checking Authentication status")
+        handleAuthenticalStatus(status: status)
+    }
+    
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+            guard let userLocation = locations.last else { return }
+            
+            let latitude = String(userLocation.coordinate.latitude)
+            let longitude = String(userLocation.coordinate.longitude)
+            
+            print("Latitude: \(latitude), Longitude: \(longitude)")
+        
+            getCurrentWeather(latitude: latitude, longitude: longitude)
+           
+        }
+        
+        func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+
+        }
+        
+        func showLocationDisabledAlert() {
+            let alert = UIAlertController(title: "Location Access Disabled", message: "Please enable location services for this app in Settings.", preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(okAction)
+            
+            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+                
+                if UIApplication.shared.canOpenURL(settingsUrl) {
+                    UIApplication.shared.open(settingsUrl, completionHandler: nil)
+                }
+            }
+            alert.addAction(settingsAction)
+            
+            present(alert, animated: true, completion: nil)
+        }
+
 }
