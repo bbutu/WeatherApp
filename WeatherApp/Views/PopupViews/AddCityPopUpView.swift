@@ -8,8 +8,6 @@
 import UIKit
 
 class AddCityPopUpView: UIView {
-    public var cityName: String = ""
-    
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -69,8 +67,11 @@ class AddCityPopUpView: UIView {
     }
     
     @objc private func didTapAddButton() {
-        cityName = enterCityTextField.text ?? ""
+        guard let todayViewController = self.firstViewController as? TodayViewController else {return}
+        let cityName = enterCityTextField.text ?? ""
+        todayViewController.updateDataWithCityName(cityName: cityName)
         enterCityTextField.text = ""
+        todayViewController.animateOut()
     }
     
     required init?(coder: NSCoder) {
@@ -113,5 +114,14 @@ class AddCityPopUpView: UIView {
         NSLayoutConstraint.activate(addButtonConstraints)
         NSLayoutConstraint.activate(stackViewConstraints)
     }
+
+}
+
+fileprivate extension UIView {
+
+  var firstViewController: UIViewController? {
+    let firstViewController = sequence(first: self, next: { $0.next }).first(where: { $0 is UIViewController })
+    return firstViewController as? UIViewController
+  }
 
 }

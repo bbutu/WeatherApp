@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct City: Codable {
+struct City: Codable, Hashable {
     var weather: [Weather]
     var main: Main
     var clouds: Clouds
@@ -15,14 +15,14 @@ struct City: Codable {
     var sys: Sys
     let name: String
     
-    struct Weather: Codable {
+    struct Weather: Codable, Hashable {
         let id: Int?
         let main: String?
         let description: String?
         let icon: String
     }
     
-    struct Sys: Codable {
+    struct Sys: Codable, Hashable {
         let type: Int
         let id: Double
         let country: String
@@ -30,11 +30,11 @@ struct City: Codable {
         let sunset: Double?
     }
 
-    struct Clouds: Codable {
+    struct Clouds: Codable , Hashable{
         let all: Double
     }
 
-    struct Main: Codable {
+    struct Main: Codable, Hashable {
         let temp: Double
         let feels_like: Double?
         let temp_min: Double?
@@ -45,7 +45,7 @@ struct City: Codable {
         let grnd_level: Double?
     }
 
-    struct Wind: Codable {
+    struct Wind: Codable, Hashable {
         let deg: Double
         let speed: Double
     }

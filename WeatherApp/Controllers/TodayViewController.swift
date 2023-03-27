@@ -12,7 +12,7 @@ class TodayViewController: UIViewController {
     
     var locationManager: CLLocationManager!
     
-    private var cities: [City] = [City]()
+    private var cities: Set<City> = Set<City>()
     
     private var popUpIsHidden = true
     
@@ -101,6 +101,10 @@ class TodayViewController: UIViewController {
         }
     }
     
+    public func updateDataWithCityName(cityName: String) {
+        getWeatherWithCityName(name: cityName)
+    }
+    
     private func refreshData() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
 
@@ -140,7 +144,7 @@ class TodayViewController: UIViewController {
         }
     }
     
-    private func animateOut() {
+    public func animateOut() {
         UIView.animate(withDuration: 0.4) {
             self.popUpView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
             self.popUpView.alpha = 0
@@ -179,9 +183,9 @@ class TodayViewController: UIViewController {
         APICaller.shared.getCurrentWeather(latitude: latitude, longitude: longitude) { result in
             switch result {
             case .success(let city):
-                self.cities.append(city)
+                self.cities.insert(city)
                 DispatchQueue.main.async { [weak self] in
-                    self?.todayCollectionView.reloadData()
+                    self?.todayCollectionView.reloadSections(IndexSet(integer: 0))
                 }
                 print(city.name)
             case .failure(let error):
@@ -194,13 +198,20 @@ class TodayViewController: UIViewController {
         APICaller.shared.getCityWith(cityName: name) { result in
             switch result {
             case .success(let city):
-                self.cities.append(city)
+                self.cities.insert(city)
                 DispatchQueue.main.async { [weak self] in
-                    self?.todayCollectionView.reloadData()
+                    self?.todayCollectionView.reloadSections(IndexSet(integer: 0))
                 }
                 print(city.name)
             case .failure(let error):
                 print(error)
+                let errorMessage = "City with that name was not found"
+                DispatchQueue.main.async { [weak self] in
+                    let errorView = ErrorPopupView()
+                    errorView.translatesAutoresizingMaskIntoConstraints = false
+                    guard let view = self?.view as? UIView else {return}
+                    errorView.showMessage(errorMessage, inView: view)
+                }
             }
         }
     }
@@ -248,9 +259,40 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
             return UICollectionViewCell()
         }
         if(!cities.isEmpty) {
-            cell.configure(with: cities[indexPath.row])
+            cell.configure(with: cities.enumerated().first{(index , value) in index == indexPath.row}!.element)
+            cell.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(didLongPressToDelete)))
         }
         return cell
+    }
+    
+    private func deleteCell(at indexPath: IndexPath) {
+        if cities.count > 1 {
+            let index = indexPath.row
+            let city = cities.enumerated().first{(index , value) in index == indexPath.row}!.element
+            cities.remove(city)
+            todayCollectionView.deleteItems(at: [indexPath])
+        } else {
+            let errorMessage = "You can't delete city weather information when there is only one city."
+            DispatchQueue.main.async { [weak self] in
+                let errorView = ErrorPopupView()
+                errorView.translatesAutoresizingMaskIntoConstraints = false
+                guard let view = self?.view as? UIView else {return}
+                errorView.showMessage(errorMessage, inView: view)
+            }
+        }
+    }
+    
+    @objc private func didLongPressToDelete(_ sender: UILongPressGestureRecognizer) {
+        if(sender.delaysTouchesEnded) {
+            let location = sender.location(in: todayCollectionView)
+            guard let indexPath = todayCollectionView.indexPathForItem(at: location) else {return}
+            let vc = UIAlertController(title: "Delete City", message: "Are you sure that you want to delete this city Weather?", preferredStyle: .actionSheet)
+            vc.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
+                self?.deleteCell(at: indexPath)
+            }))
+            vc.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            present(vc, animated: true)
+        }
     }
 }
 
@@ -296,7 +338,7 @@ extension TodayViewController: CLLocationManagerDelegate {
         }
         
         func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-
+            
         }
         
         func showLocationDisabledAlert() {
