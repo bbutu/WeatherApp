@@ -69,9 +69,41 @@ class AddCityPopUpView: UIView {
     @objc private func didTapAddButton() {
         guard let todayViewController = self.firstViewController as? TodayViewController else {return}
         let cityName = enterCityTextField.text ?? ""
-        todayViewController.updateDataWithCityName(cityName: cityName)
-        enterCityTextField.text = ""
+        addIndicatorViewToButton(viewController: todayViewController, cityName: cityName)
         todayViewController.animateOut()
+    }
+    
+    private func addIndicatorViewToButton(viewController: TodayViewController, cityName: String) {
+        prepareViewForLoadingInformation()
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        ConfigureActivityIndicatorViewConstraints(activityIndicatorView: activityIndicatorView)
+        activityIndicatorView.startAnimating()
+        viewController.updateDataWithCityName(cityName: cityName)
+        activityIndicatorView.stopAnimating()
+        activityIndicatorView.removeFromSuperview()
+        returnViewToTheStartingStage()
+    }
+    
+    private func returnViewToTheStartingStage() {
+        enterCityTextField.text = ""
+        let plusSign = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 22,weight: .bold))
+        addButton.setImage(plusSign, for: .normal)
+        addButton.isEnabled = true
+    }
+    
+    private func prepareViewForLoadingInformation() {
+        addButton.isEnabled = false
+        addButton.setImage(nil, for: .normal)
+    }
+    
+    private func ConfigureActivityIndicatorViewConstraints(activityIndicatorView: UIActivityIndicatorView) {
+        activityIndicatorView.color = .systemGreen
+        addButton.addSubview(activityIndicatorView)
+        activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicatorView.centerXAnchor.constraint(equalTo: addButton.centerXAnchor),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: addButton.centerYAnchor)
+        ])
     }
     
     required init?(coder: NSCoder) {
@@ -79,20 +111,6 @@ class AddCityPopUpView: UIView {
     }
     
     private func configureConstraints() {
-//        let addCityLabelConstraints = [
-//            addCityLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            addCityLabel.topAnchor.constraint(equalTo: topAnchor, constant: 30),
-//            addCityLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 20),
-//            addCityLabel.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -20),
-//        ]
-//
-//        let instructionLabelConstraints = [
-//            instructionLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            instructionLabel.topAnchor.constraint(equalTo: addCityLabel.bottomAnchor, constant: 20),
-//            instructionLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 20),
-//            instructionLabel.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -20),
-//        ]
-        
         let enterCityTextFieldConstraints = [
             enterCityTextField.leadingAnchor.constraint(equalTo: stackView.leadingAnchor,constant: 20),
             enterCityTextField.trailingAnchor.constraint(equalTo: stackView.trailingAnchor,constant: -20),

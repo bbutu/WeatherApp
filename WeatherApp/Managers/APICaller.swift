@@ -12,6 +12,7 @@ struct Constants {
     static let baseURL = "https://api.openweathermap.org"
     static let imagePathLeft = "https://openweathermap.org/img/wn/"
     static let imagePathRight = "@2x.png"
+    static let unitsOfMeasurement = "&units=metric"
 }
 
 enum APIError: Error {
@@ -22,7 +23,7 @@ class APICaller {
     static let shared = APICaller()
     
     func getCurrentWeather(latitude: String,longitude: String,completion: @escaping (Result<City, Error>) -> Void) {
-        guard let url = URL(string: "\(Constants.baseURL)/data/2.5/weather?lat=\(latitude)&lon=\(longitude)&appid=\(Constants.API_KEY)") else{return}
+        guard let url = URL(string: "\(Constants.baseURL)/data/2.5/weather?lat=\(latitude)&lon=\(longitude)&appid=\(Constants.API_KEY)\(Constants.unitsOfMeasurement)") else{return}
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else{
                 return
@@ -38,7 +39,7 @@ class APICaller {
     }
     
     func getFiveDaysWeather(latitude: String,longitude: String,completion: @escaping (Result<City, Error>) -> Void) {
-        guard let url = URL(string: "\(Constants.baseURL)/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(Constants.API_KEY)") else{return}
+        guard let url = URL(string: "\(Constants.baseURL)/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(Constants.API_KEY)\(Constants.unitsOfMeasurement)") else{return}
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else{
                 return
@@ -54,7 +55,7 @@ class APICaller {
     }
     
     func getCityWith(cityName: String,completion: @escaping (Result<City, Error>) -> Void) {
-        guard let url = URL(string: "\(Constants.baseURL)/data/2.5/weather?q=\(cityName)&appid=\(Constants.API_KEY)") else{return}
+        guard let url = URL(string: "\(Constants.baseURL)/data/2.5/weather?q=\(cityName)&appid=\(Constants.API_KEY)\(Constants.unitsOfMeasurement)") else{return}
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else{
                 return

@@ -267,7 +267,6 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
     
     private func deleteCell(at indexPath: IndexPath) {
         if cities.count > 1 {
-            let index = indexPath.row
             let city = cities.enumerated().first{(index , value) in index == indexPath.row}!.element
             cities.remove(city)
             todayCollectionView.deleteItems(at: [indexPath])
