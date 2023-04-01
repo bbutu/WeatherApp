@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ED2E35AE29B0D6E300BEA21B /* HSCycleGalleryViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2E35AA29B0D6E300BEA21B /* HSCycleGalleryViewLayout.swift */; };
-		ED2E35AF29B0D6E300BEA21B /* HSCycleGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2E35AB29B0D6E300BEA21B /* HSCycleGalleryView.swift */; };
 		ED2E35B229B0E38D00BEA21B /* TodayCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2E35B129B0E38D00BEA21B /* TodayCollectionViewCell.swift */; };
 		ED2E35B429B0E99400BEA21B /* WeatherInforamtionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2E35B329B0E99400BEA21B /* WeatherInforamtionReusableView.swift */; };
 		ED6F63D729B3CD8F00830CE2 /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F63D629B3CD8F00830CE2 /* APICaller.swift */; };
@@ -19,6 +17,7 @@
 		ED6F63E329D1A37900830CE2 /* ErrorPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F63E229D1A37900830CE2 /* ErrorPopupView.swift */; };
 		ED6F63E629D4943D00830CE2 /* CityFiveDayWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F63E529D4943D00830CE2 /* CityFiveDayWeather.swift */; };
 		ED6F63E829D859EC00830CE2 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F63E729D859EC00830CE2 /* LoadingView.swift */; };
+		ED6F640229D87EC000830CE2 /* UPCarouselFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F63FF29D87EC000830CE2 /* UPCarouselFlowLayout.swift */; };
 		ED91512A299A4C9C00BBCEB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED915129299A4C9C00BBCEB3 /* AppDelegate.swift */; };
 		ED91512C299A4C9C00BBCEB3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED91512B299A4C9C00BBCEB3 /* SceneDelegate.swift */; };
 		ED91512E299A4C9C00BBCEB3 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED91512D299A4C9C00BBCEB3 /* MainTabBarViewController.swift */; };
@@ -48,9 +47,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		ED2E35AA29B0D6E300BEA21B /* HSCycleGalleryViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HSCycleGalleryViewLayout.swift; sourceTree = "<group>"; };
-		ED2E35AB29B0D6E300BEA21B /* HSCycleGalleryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HSCycleGalleryView.swift; sourceTree = "<group>"; };
-		ED2E35AD29B0D6E300BEA21B /* HSCycleGalleryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSCycleGalleryView.h; sourceTree = "<group>"; };
 		ED2E35B129B0E38D00BEA21B /* TodayCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayCollectionViewCell.swift; sourceTree = "<group>"; };
 		ED2E35B329B0E99400BEA21B /* WeatherInforamtionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherInforamtionReusableView.swift; sourceTree = "<group>"; };
 		ED6F63D629B3CD8F00830CE2 /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
@@ -59,6 +55,8 @@
 		ED6F63E229D1A37900830CE2 /* ErrorPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorPopupView.swift; sourceTree = "<group>"; };
 		ED6F63E529D4943D00830CE2 /* CityFiveDayWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityFiveDayWeather.swift; sourceTree = "<group>"; };
 		ED6F63E729D859EC00830CE2 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		ED6F63FF29D87EC000830CE2 /* UPCarouselFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UPCarouselFlowLayout.swift; sourceTree = "<group>"; };
+		ED6F640029D87EC000830CE2 /* UPCarouselFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UPCarouselFlowLayout.h; sourceTree = "<group>"; };
 		ED915126299A4C9C00BBCEB3 /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED915129299A4C9C00BBCEB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ED91512B299A4C9C00BBCEB3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -101,16 +99,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		ED2E35A929B0D6E300BEA21B /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				ED2E35AA29B0D6E300BEA21B /* HSCycleGalleryViewLayout.swift */,
-				ED2E35AB29B0D6E300BEA21B /* HSCycleGalleryView.swift */,
-				ED2E35AD29B0D6E300BEA21B /* HSCycleGalleryView.h */,
-			);
-			path = Source;
-			sourceTree = "<group>";
-		};
 		ED6F63D529B3CD7B00830CE2 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -137,10 +125,19 @@
 			path = PopupViews;
 			sourceTree = "<group>";
 		};
+		ED6F63FE29D87EC000830CE2 /* UPCarouselFlowLayout */ = {
+			isa = PBXGroup;
+			children = (
+				ED6F63FF29D87EC000830CE2 /* UPCarouselFlowLayout.swift */,
+				ED6F640029D87EC000830CE2 /* UPCarouselFlowLayout.h */,
+			);
+			path = UPCarouselFlowLayout;
+			sourceTree = "<group>";
+		};
 		ED91511D299A4C9C00BBCEB3 = {
 			isa = PBXGroup;
 			children = (
-				ED2E35A929B0D6E300BEA21B /* Source */,
+				ED6F63FE29D87EC000830CE2 /* UPCarouselFlowLayout */,
 				ED915128299A4C9C00BBCEB3 /* WeatherApp */,
 				ED915127299A4C9C00BBCEB3 /* Products */,
 			);
@@ -348,13 +345,12 @@
 				ED6F63E629D4943D00830CE2 /* CityFiveDayWeather.swift in Sources */,
 				ED91515B299BA94700BBCEB3 /* TodayViewController.swift in Sources */,
 				ED91512E299A4C9C00BBCEB3 /* MainTabBarViewController.swift in Sources */,
+				ED6F640229D87EC000830CE2 /* UPCarouselFlowLayout.swift in Sources */,
 				ED2E35B229B0E38D00BEA21B /* TodayCollectionViewCell.swift in Sources */,
 				ED2E35B429B0E99400BEA21B /* WeatherInforamtionReusableView.swift in Sources */,
 				ED91515D299BA95B00BBCEB3 /* ForecastViewController.swift in Sources */,
 				ED6F63D729B3CD8F00830CE2 /* APICaller.swift in Sources */,
-				ED2E35AE29B0D6E300BEA21B /* HSCycleGalleryViewLayout.swift in Sources */,
 				ED91512A299A4C9C00BBCEB3 /* AppDelegate.swift in Sources */,
-				ED2E35AF29B0D6E300BEA21B /* HSCycleGalleryView.swift in Sources */,
 				ED6F63DA29B3D50000830CE2 /* City.swift in Sources */,
 				ED91512C299A4C9C00BBCEB3 /* SceneDelegate.swift in Sources */,
 			);

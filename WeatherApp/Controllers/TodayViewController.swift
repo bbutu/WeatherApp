@@ -52,10 +52,14 @@ class TodayViewController: UIViewController {
     }()
     
     private lazy var todayCollectionView: UICollectionView = {
-        let layout = HSCycleGalleryViewLayout()
-        layout.itemWidth = view.bounds.width * 0.8
-        layout.itemHeight = view.bounds.height * 0.55
-        let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height), collectionViewLayout: layout)
+//        let layout = HSCycleGalleryViewLayout()
+//        layout.itemWidth = view.bounds.width * 0.8
+//        layout.itemHeight = view.bounds.height * 0.55
+        let layout = UPCarouselFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: view.frame.width * 0.8, height: view.frame.height * 0.55)
+        let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height), collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(TodayCollectionViewCell.self, forCellWithReuseIdentifier: TodayCollectionViewCell.identifier)
         collectionView.backgroundColor = .blueBackgroundColor
         return collectionView
@@ -203,6 +207,13 @@ class TodayViewController: UIViewController {
     }
     
     private func configurePopViewConstraints() {
+        let todayCollectionViewConstraints = [
+            todayCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            todayCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            todayCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            todayCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ]
+        
         let popUpViewConstraints = [
             popUpView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             popUpView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -217,6 +228,7 @@ class TodayViewController: UIViewController {
             visualEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ]
         
+        NSLayoutConstraint.activate(todayCollectionViewConstraints)
         NSLayoutConstraint.activate(popUpViewConstraints)
         NSLayoutConstraint.activate(visualEffectViewConstraints)
         
