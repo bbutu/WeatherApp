@@ -1,37 +1,35 @@
 //
-//  City.swift
+//  CityFiveDayWeather.swift
 //  WeatherApp
 //
-//  Created by Beka Buturishvili on 04.03.23.
+//  Created by Beka Buturishvili on 29.03.23.
 //
 
 import Foundation
 
-struct City: Codable, Hashable {
-    var coord: Coord
-    var weather: [Weather]
-    var main: Main
-    var clouds: Clouds
-    var wind: Wind
-    var sys: Sys
-    var name: String
+struct CityFiveDayWeather: Codable, Hashable {
+    var list: [CityThreeHourlyWeather]?
     
-    struct Coord: Codable, Hashable {
-        let lon: Double?
-        let lat: Double?
+    struct CityThreeHourlyWeather: Codable, Hashable {
+        var main: Main
+        let weather: [Weather]
+        var clouds: Clouds
+        var wind: Wind
+        var sys: Sys?
+        let dt_txt: String
     }
-    
+
     struct Weather: Codable, Hashable {
         let id: Int?
         let main: String?
         let description: String?
         let icon: String
     }
-    
+
     struct Sys: Codable, Hashable {
-        let type: Int
-        let id: Double
-        let country: String
+        let type: Int?
+        let id: Double?
+        let country: String?
         let sunrise: Double?
         let sunset: Double?
     }
@@ -57,4 +55,3 @@ struct City: Codable, Hashable {
     }
 
 }
-

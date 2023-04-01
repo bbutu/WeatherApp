@@ -38,14 +38,14 @@ class APICaller {
         task.resume() 
     }
     
-    func getFiveDaysWeather(latitude: String,longitude: String,completion: @escaping (Result<City, Error>) -> Void) {
+    func getFiveDaysWeather(latitude: String,longitude: String,completion: @escaping (Result<CityFiveDayWeather, Error>) -> Void) {
         guard let url = URL(string: "\(Constants.baseURL)/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(Constants.API_KEY)\(Constants.unitsOfMeasurement)") else{return}
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else{
                 return
             }
             do {
-                let result = try JSONDecoder().decode(City.self,from: data)
+                let result = try JSONDecoder().decode(CityFiveDayWeather.self,from: data)
                 completion(.success(result))
             } catch {
                 completion(.failure(error))

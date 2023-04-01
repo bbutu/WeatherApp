@@ -54,7 +54,7 @@ class TodayViewController: UIViewController {
     private lazy var todayCollectionView: UICollectionView = {
         let layout = HSCycleGalleryViewLayout()
         layout.itemWidth = view.bounds.width * 0.8
-        layout.itemHeight = view.bounds.height * 0.5
+        layout.itemHeight = view.bounds.height * 0.55
         let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height), collectionViewLayout: layout)
         collectionView.register(TodayCollectionViewCell.self, forCellWithReuseIdentifier: TodayCollectionViewCell.identifier)
         collectionView.backgroundColor = .blueBackgroundColor
@@ -63,16 +63,17 @@ class TodayViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        DispatchQueue.global(qos: .userInitiated).async {
-//            // Wait for location update before executing rest of the code
-//            while self.locationManager.location == nil {}
-//        }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        getLocation()
-//        retrieveAndReloadDataAfterFirstRun()
+        let loadingView = LoadingView()
+        view.addSubview(loadingView)
+        loadingView.frame = view.bounds
+        DispatchQueue.main.async {[weak self] in
+            self?.getLocation()
+        }
+        loadingView.removeFromSuperview()
         view.backgroundColor = .blueBackgroundColor
         configureNavBar()
         view.addSubview(todayCollectionView)
@@ -86,19 +87,6 @@ class TodayViewController: UIViewController {
         todayCollectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         addShadowsToButton()
         configureConstraints()
-    }
-    
-    private func retrieveAndReloadDataAfterFirstRun() {
-        if(dataIsRetrieved == false) {
-            view.backgroundColor = .white
-            let activity = UIActivityIndicatorView()
-            activity.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-            activity.center = view.center
-            activity.style = .large
-            view.addSubview(activity)
-            activity.stopAnimating()
-            dataIsRetrieved = true
-        }
     }
     
     public func updateDataWithCityName(cityName: String) {
@@ -187,7 +175,6 @@ class TodayViewController: UIViewController {
                 DispatchQueue.main.async { [weak self] in
                     self?.todayCollectionView.reloadSections(IndexSet(integer: 0))
                 }
-                print(city.name)
             case .failure(let error):
                 print(error)
             }
@@ -202,7 +189,6 @@ class TodayViewController: UIViewController {
                 DispatchQueue.main.async { [weak self] in
                     self?.todayCollectionView.reloadSections(IndexSet(integer: 0))
                 }
-                print(city.name)
             case .failure(let error):
                 print(error)
                 let errorMessage = "City with that name was not found"
@@ -293,6 +279,19 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
             present(vc, animated: true)
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+//        print(indexPath.row)
+    }
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let navController = self.tabBarController?.viewControllers?[1] as! UINavigationController
+        let vc = navController.topViewController as! ForecastViewController
+        let city = cities.enumerated().first{(index , value) in index == indexPath.row}!.element
+        print(city.name)
+        let lat: String = String(city.coord.lat!)
+        let lon: String = String(city.coord.lon!)
+        vc.configureWith(lat: lat, lon: lon)
+    }
 }
 
 extension TodayViewController: CLLocationManagerDelegate {
@@ -319,7 +318,6 @@ extension TodayViewController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        print("Checking Authentication status")
         handleAuthenticalStatus(status: status)
     }
     
@@ -329,8 +327,6 @@ extension TodayViewController: CLLocationManagerDelegate {
             
             let latitude = String(userLocation.coordinate.latitude)
             let longitude = String(userLocation.coordinate.longitude)
-            
-            print("Latitude: \(latitude), Longitude: \(longitude)")
         
             getCurrentWeather(latitude: latitude, longitude: longitude)
            

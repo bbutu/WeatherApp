@@ -157,7 +157,7 @@ class TodayCollectionViewCell: UICollectionViewCell {
         guard let url = URL(string: imagePath) else {return}
         self.weatherImageView.sd_setImage(with: url, completed: nil)
         self.cityAndCountryLabel.text = city.name + ", " + city.sys.country
-        self.temperatureLabel.text = String(city.main.temp) + "ºC | " + city.weather[0].main!
+        self.temperatureLabel.text = String(Int(city.main.temp)) + "ºC | " + city.weather[0].main!
         self.cloudinessView.configure(systemName: "cloud.rain", descriptionText: "Cloudiness", informationText: String(city.clouds.all))
         self.humidityView.configure(systemName: "drop", descriptionText: "Humidity", informationText: String(city.main.humidity))
         self.windSpeedView.configure(systemName: "wind", descriptionText: "Wind Speed", informationText: String(city.wind.speed))

@@ -98,4 +98,26 @@ class ForecastTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate(stackViewConstraints)
     }
     
+    func configure(with cityThreeHourlyWeather: CityFiveDayWeather.CityThreeHourlyWeather) {
+        let imagePath = APICaller.shared.getWeatherIconUrl(with: cityThreeHourlyWeather.weather[0].icon)
+        guard let url = URL(string: imagePath) else {return}
+        self.forecastImageView.sd_setImage(with: url, completed: nil)
+        self.timeLabel.text = convertDateStringToHour(dateString: cityThreeHourlyWeather.dt_txt)
+        self.weatherDescriptionLabel.text = cityThreeHourlyWeather.weather[0].description?.uppercased()
+        self.temperatureLabel.text = "\(Int(cityThreeHourlyWeather.main.temp))°C"
+    }
+    
+    private func convertDateStringToHour(dateString: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        guard let date = dateFormatter.date(from: dateString) else {
+            print("Failed to parse date")
+            return ""
+        }
+        let hourMinuteFormatter = DateFormatter()
+        hourMinuteFormatter.dateFormat = "HH:mm"
+        let hourMinuteString = hourMinuteFormatter.string(from: date)
+        return hourMinuteString
+    }
+    
 }
