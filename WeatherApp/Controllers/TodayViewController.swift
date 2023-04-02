@@ -20,6 +20,15 @@ class TodayViewController: UIViewController {
     
     var effect: UIVisualEffect!
     
+    private lazy var pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        pageControl.backgroundColor = .blueBackgroundColor
+        pageControl.pageIndicatorTintColor = .systemGray
+        pageControl.currentPageIndicatorTintColor = .white
+        return pageControl
+    }()
+    
     private var visualEffectView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .light)
         let view = UIVisualEffectView(effect: blurEffect)
@@ -52,9 +61,6 @@ class TodayViewController: UIViewController {
     }()
     
     private lazy var todayCollectionView: UICollectionView = {
-//        let layout = HSCycleGalleryViewLayout()
-//        layout.itemWidth = view.bounds.width * 0.8
-//        layout.itemHeight = view.bounds.height * 0.55
         let layout = UPCarouselFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: view.frame.width * 0.8, height: view.frame.height * 0.55)
@@ -82,6 +88,7 @@ class TodayViewController: UIViewController {
         configureNavBar()
         view.addSubview(todayCollectionView)
         view.addSubview(addButton)
+        view.addSubview(pageControl)
         todayCollectionView.delegate = self
         todayCollectionView.dataSource = self
         addButton.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)
@@ -178,6 +185,7 @@ class TodayViewController: UIViewController {
                 self.cities.insert(city)
                 DispatchQueue.main.async { [weak self] in
                     self?.todayCollectionView.reloadSections(IndexSet(integer: 0))
+                    self?.pageControl.numberOfPages = self?.todayCollectionView.numberOfItems(inSection: 0) ?? 0
                 }
             case .failure(let error):
                 print(error)
@@ -191,7 +199,9 @@ class TodayViewController: UIViewController {
             case .success(let city):
                 self.cities.insert(city)
                 DispatchQueue.main.async { [weak self] in
-                    self?.todayCollectionView.reloadSections(IndexSet(integer: 0))
+                    self?.todayCollectionView.reloadData()
+//                    self?.todayCollectionView.reloadSections(IndexSet(integer: 0))
+                    self?.pageControl.numberOfPages = self?.todayCollectionView.numberOfItems(inSection: 0) ?? 0
                 }
             case .failure(let error):
                 print(error)
@@ -242,7 +252,16 @@ class TodayViewController: UIViewController {
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor),
         ]
         
+        let pageControlConstraints = [
+            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pageControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            pageControl.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            pageControl.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            pageControl.heightAnchor.constraint(equalToConstant: 50)
+        ]
+        
         NSLayoutConstraint.activate(addButtonConstraints)
+        NSLayoutConstraint.activate(pageControlConstraints)
     }
 
 }
@@ -268,6 +287,7 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
             let city = cities.enumerated().first{(index , value) in index == indexPath.row}!.element
             cities.remove(city)
             todayCollectionView.deleteItems(at: [indexPath])
+            pageControl.numberOfPages = self.todayCollectionView.numberOfItems(inSection: 0)
         } else {
             let errorMessage = "You can't delete city weather information when there is only one city."
             DispatchQueue.main.async { [weak self] in
@@ -292,10 +312,8 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//        print(indexPath.row)
-    }
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        pageControl.currentPage = indexPath.row
         let navController = self.tabBarController?.viewControllers?[1] as! UINavigationController
         let vc = navController.topViewController as! ForecastViewController
         let city = cities.enumerated().first{(index , value) in index == indexPath.row}!.element
