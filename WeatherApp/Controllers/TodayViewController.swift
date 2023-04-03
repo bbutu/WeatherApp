@@ -24,8 +24,8 @@ class TodayViewController: UIViewController {
         let pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         pageControl.backgroundColor = .blueBackgroundColor
-        pageControl.pageIndicatorTintColor = .systemGray
-        pageControl.currentPageIndicatorTintColor = .white
+        pageControl.pageIndicatorTintColor = .white
+        pageControl.currentPageIndicatorTintColor = .accentColor
         return pageControl
     }()
     
@@ -320,7 +320,6 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         let navController = self.tabBarController?.viewControllers?[1] as! UINavigationController
         let vc = navController.topViewController as! ForecastViewController
         let city = cities.enumerated().first{(index , value) in index == indexPath.row}!.element
-        print(city.name)
         let lat: String = String(city.coord.lat!)
         let lon: String = String(city.coord.lon!)
         

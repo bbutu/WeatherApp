@@ -17,8 +17,8 @@ enum WeekDay: String {
     case seventh    = "Saturday"
 }
 
-struct WeekDayAndWeatherNumber {
-    let weekday: String
+struct WeekDaysAndNumberOfWeather {
+    var weekday: String
     var weatherNumber: Int
 }
 
@@ -27,7 +27,7 @@ class ForecastViewController: UIViewController {
     private var lon = ""
     
     private var fiveDayForecastData: CityFiveDayWeather = CityFiveDayWeather()
-    private var weekdaysAndDifferentTimeForecastMap = [String : Int]()
+    private var weekdaysAndDifferentTimeForecastMap: [WeekDaysAndNumberOfWeather] = []
     
     private let forecastTable: UITableView = {
         let table = UITableView()
@@ -76,8 +76,6 @@ class ForecastViewController: UIViewController {
     }
     
     private func getFiveDayWeatherAndReloadData() {
-        print(lat)
-        print(lon)
         APICaller.shared.getFiveDaysWeather(latitude: lat, longitude: lon) { result in
             switch result {
             case .success(let fiveDayCityForecast):
@@ -96,15 +94,17 @@ class ForecastViewController: UIViewController {
         for threeHoursWeather in fiveDayCityForecast.list! {
             let dateString = threeHoursWeather.dt_txt
             let weekDay = self.convertDateFormatToWeekday(dateString: dateString)
-            if(self.weekdaysAndDifferentTimeForecastMap[weekDay] != nil) {
-                let value = self.weekdaysAndDifferentTimeForecastMap[weekDay]!
-                self.weekdaysAndDifferentTimeForecastMap.updateValue(value + 1, forKey: weekDay)
-            }else {
-                self.weekdaysAndDifferentTimeForecastMap.updateValue(0, forKey: weekDay)
-            }
+           addWeekDayAndWeatherNumber(weekDay: weekDay)
         }
-
-        print(self.weekdaysAndDifferentTimeForecastMap)
+    }
+    
+    private func addWeekDayAndWeatherNumber(weekDay: String) {
+        if let index = weekdaysAndDifferentTimeForecastMap.firstIndex(where: { $0.weekday == weekDay }) {
+            weekdaysAndDifferentTimeForecastMap[index].weatherNumber += 1
+        } else {
+            let newWeekDayAndWeatherNumber = WeekDaysAndNumberOfWeather(weekday: weekDay, weatherNumber: 0)
+            weekdaysAndDifferentTimeForecastMap.append(newWeekDayAndWeatherNumber)
+        }
     }
     
     private func convertDateFormatToWeekday(dateString: String) -> String {
@@ -130,15 +130,12 @@ class ForecastViewController: UIViewController {
 extension ForecastViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if(!weekdaysAndDifferentTimeForecastMap.isEmpty) {
-            let allKeys = Array(weekdaysAndDifferentTimeForecastMap.keys)
-            let myKey = allKeys[section]
-            return myKey
+            return weekdaysAndDifferentTimeForecastMap[section].weekday
         }
         return ""
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         if(!weekdaysAndDifferentTimeForecastMap.isEmpty) {
-            print("shevedi")
             return weekdaysAndDifferentTimeForecastMap.count
         }
         return 1
@@ -146,9 +143,7 @@ extension ForecastViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if(!weekdaysAndDifferentTimeForecastMap.isEmpty) {
-            let allKeys = Array(weekdaysAndDifferentTimeForecastMap.keys)
-            let myKey = allKeys[section]
-            return weekdaysAndDifferentTimeForecastMap[myKey] ?? 0
+            return weekdaysAndDifferentTimeForecastMap[section].weatherNumber
         }
         return fiveDayForecastData.list?.count ?? 0
     }
