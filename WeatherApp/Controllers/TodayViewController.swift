@@ -73,6 +73,9 @@ class TodayViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let navController = self.tabBarController?.viewControllers?[1] as! UINavigationController
+        let vc = navController.topViewController as! ForecastViewController
+        vc.clearData()
     }
 
     override func viewDidLoad() {
@@ -320,6 +323,7 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         print(city.name)
         let lat: String = String(city.coord.lat!)
         let lon: String = String(city.coord.lon!)
+        
         vc.configureWith(lat: lat, lon: lon)
     }
 }

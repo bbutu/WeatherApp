@@ -17,6 +17,11 @@ enum WeekDay: String {
     case seventh    = "Saturday"
 }
 
+struct WeekDayAndWeatherNumber {
+    let weekday: String
+    var weatherNumber: Int
+}
+
 class ForecastViewController: UIViewController {
     private var lat = ""
     private var lon = ""
@@ -51,6 +56,13 @@ class ForecastViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         forecastTable.frame = view.bounds
+    }
+    
+    func clearData() {
+        if(fiveDayForecastData.list?.count != 0 && weekdaysAndDifferentTimeForecastMap.count != 0) {
+            fiveDayForecastData.list?.removeAll()
+            weekdaysAndDifferentTimeForecastMap.removeAll()
+        }
     }
     
     private func configureNavBar() {
@@ -91,6 +103,7 @@ class ForecastViewController: UIViewController {
                 self.weekdaysAndDifferentTimeForecastMap.updateValue(0, forKey: weekDay)
             }
         }
+
         print(self.weekdaysAndDifferentTimeForecastMap)
     }
     
@@ -115,14 +128,28 @@ class ForecastViewController: UIViewController {
 }
 
 extension ForecastViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int, indexPath: IndexPath) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if(!weekdaysAndDifferentTimeForecastMap.isEmpty) {
+            let allKeys = Array(weekdaysAndDifferentTimeForecastMap.keys)
+            let myKey = allKeys[section]
+            return myKey
+        }
         return ""
     }
     func numberOfSections(in tableView: UITableView) -> Int {
+        if(!weekdaysAndDifferentTimeForecastMap.isEmpty) {
+            print("shevedi")
+            return weekdaysAndDifferentTimeForecastMap.count
+        }
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if(!weekdaysAndDifferentTimeForecastMap.isEmpty) {
+            let allKeys = Array(weekdaysAndDifferentTimeForecastMap.keys)
+            let myKey = allKeys[section]
+            return weekdaysAndDifferentTimeForecastMap[myKey] ?? 0
+        }
         return fiveDayForecastData.list?.count ?? 0
     }
     
